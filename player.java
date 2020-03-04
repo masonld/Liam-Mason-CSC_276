@@ -18,8 +18,8 @@ public class player
 	public player (String name)
 	 {
 		DIE_SIZE = 6;
-		dice die_1 = new dice(1, 2, 4, 5, 6, 10);
-		dice die_2 = new dice(2, 3, 4, 5, 6, 10);
+		dice die_1 = new dice(2, 3, 4, 5, 6, 10);
+		dice die_2 = new dice(1, 2, 4, 5, 6, 10);
 		dice_List1 = die_1.die;
 		dice_List2 = die_2.die;
 		rollList = new ArrayList<>();
@@ -77,8 +77,10 @@ public class player
 	//Purpose: Updates the score of the player based on the rules.
 	//Post-Conditions:The score is updated from it's original value.
 	private void updateScore(int roll1, int roll2,int roll3, int roll4, int roll5)
-	 {		
-		if(checkRolls(roll1))
+	 {	
+		if(checkTrain(roll1))
+			score = score + (roll1*100) + this.addRolls();
+		else if(checkRolls(roll1))
 			score = score + (roll1*10)+ this.addRolls();
 		else if(checkRolls(roll2))
 			score = score + (roll2*10)+ this.addRolls();
@@ -95,13 +97,33 @@ public class player
 	//Purpose:Checks the occurences of a roll.
 	//Post-Conditions: Returns true or false.
 	private boolean checkRolls(int value){
-		boolean flash = false;
+		boolean check = false;
 		int occurences = Collections.frequency(rollList, value);
-		if(occurences >= 3){
-			flash = true;
+		if(occurences >= 3)
+		{
+			check = true;
 			Collections.replaceAll(rollList, value, 0);
 		}
-		return flash;
+		if(occurences == 2 && dice_List2.contains(1))
+		{
+			check = true;
+			Collections.replaceAll(rollList, value, 0);
+		}
+		return check;
+	}
+	
+	//purpose: Checks the rolls to see if it results in a freight train.
+	//Post-Conditions: Returns true or false. 
+	private boolean checkTrain(int value)
+	{
+		boolean check = false;
+		int occurences = Collections.frequency(rollList, value);
+		if(occurences == 5)
+		{
+			check = true;
+			Collections.replaceAll(rollList,value,0);
+		}
+		return check;
 	}
 	
 	//Purpose:Adds up the rolls
